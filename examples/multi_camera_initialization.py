@@ -20,7 +20,7 @@ def multi_easy():
                                config_path=os.path.join(os.getcwd(),"examples","settings_files"))
         device.enable_device(usb2Mode=False)
         devices[devID] = device
-    
+
     for _ in range(50):
         for devId,device in devices.items():
             res,frames,_ = device.pull_for_frames()

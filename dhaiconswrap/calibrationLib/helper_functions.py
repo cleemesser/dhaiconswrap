@@ -35,7 +35,7 @@ def calculate_rmsd(points1, points2, validPoints=None):
 	assert(points1.shape == points2.shape)
 	N = points1.shape[1]
 
-	if validPoints == None:
+	if validPoints is None:
 		validPoints = [True]*N
 
 	assert(len(validPoints) == N)
@@ -46,9 +46,10 @@ def calculate_rmsd(points1, points2, validPoints=None):
 	N = points1.shape[1]
 
 	dist = points1 - points2
-	rmsd = 0
-	for col in range(N):
-		rmsd += np.matmul(dist[:,col].transpose(), dist[:,col]).flatten()[0]
+	rmsd = sum(
+		np.matmul(dist[:, col].transpose(), dist[:, col]).flatten()[0]
+		for col in range(N)
+	)
 
 	return np.sqrt(rmsd/N)
 

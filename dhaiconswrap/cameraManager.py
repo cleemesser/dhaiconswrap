@@ -42,7 +42,11 @@ class DeviceManager():
 		self.fps = fps
 		self.deviceId = deviceid
 		self.nn_active = nn_mode
-		assert nn_model in ["SSD","YOLO"], "SELECT THE ONE OF THE TWO AVAILABLE ARCHITECTURE ['SSD' or 'YOLO']"
+		assert nn_model in {
+			"SSD",
+			"YOLO",
+		}, "SELECT THE ONE OF THE TWO AVAILABLE ARCHITECTURE ['SSD' or 'YOLO']"
+
 		self.nn_model = nn_model
 		self.calibration = calibration_mode
 		self.verbose = verbose
@@ -73,11 +77,12 @@ class DeviceManager():
 				configfile = json.load(jsonfile)
 			return configfile
 		jpath = os.path.join(jpath,f"{self.deviceId}_camera_configuration.json")
-		if not os.path.isfile(jpath):
-			if not "camera_configuration.json" in os.listdir(os.getcwd()):
-				create_depthconf_json(jpath)
-				print("#"*70,"\n","[WARNING MESSAGE] : A camera configuration file was created with default setting because",
-						"this file is used to configure the stereo camera!\n","#"*70)
+		if not os.path.isfile(
+			jpath
+		) and "camera_configuration.json" not in os.listdir(os.getcwd()):
+			create_depthconf_json(jpath)
+			print("#"*70,"\n","[WARNING MESSAGE] : A camera configuration file was created with default setting because",
+					"this file is used to configure the stereo camera!\n","#"*70)
 		with open(jpath) as jsonfile:
 				configfile = json.load(jsonfile)
 		return configfile
@@ -105,9 +110,7 @@ class DeviceManager():
 		self.get_intrinsic()
 		self.get_extrinsic()
 		calibration_info = [self.intrinsic_info['RGB'],self.intrinsic_info['RIGHT'],self.extrinsic_info]
-		path = "./"
-		if self.config_path is not None:
-			path = self.config_path
+		path = self.config_path if self.config_path is not None else "./"
 		self.pointcloud_manager = create_pointcloud_manager(self.deviceId,calibration_info,path=path)
 	
 	@infoprint
@@ -151,11 +154,7 @@ class DeviceManager():
 			if self.nn_active:
 				nn_foto = self.q_nn_input.tryGet()
 				nn_detection = self.q_nn.get()
-				if nn_detection is not None:
-					detections = nn_detection.detections
-				else:
-					detections = None
-
+				detections = nn_detection.detections if nn_detection is not None else None
 			if rgb_foto is not None and depth is not None:
 
 				state_frame = True
@@ -163,9 +162,7 @@ class DeviceManager():
 				frames['depth'] = self._convert_depth(depth.getFrame())
 				frames['disparity_image'] = disparity_frame.getFrame()
 				frames["monos_image"]= {"left":left_frame.getCvFrame(),"right":right_frame.getCvFrame()}
-				results = {}
-				results['points_cloud_data'] = None
-				results['detections'] = None
+				results = {'points_cloud_data': None, 'detections': None}
 				if self.pointcloud_manager is not None and get_pointscloud:
 					results['points_cloud_data'] = self.pointcloud_manager.StartCalculation(frames)
 
@@ -299,19 +296,16 @@ class DeviceManager():
 
 	@infoprint
 	def _configure_depth_properties(self,left,right,depth,calibration,verbose):
-	
+
 		if not calibration:
 			left.setResolution(DEPTH_RESOLUTIONS[self.depthconfig["StereoSensorResolution"]])
 			left.setBoardSocket(dhai.CameraBoardSocket.LEFT)
 			right.setResolution(DEPTH_RESOLUTIONS[self.depthconfig["StereoSensorResolution"]])
-			right.setBoardSocket(dhai.CameraBoardSocket.RIGHT)
 		else:
 			left.setResolution(DEPTH_RESOLUTIONS[self.depthconfig["StereoSensorResolution_calibration"]])
 			left.setBoardSocket(dhai.CameraBoardSocket.LEFT)
 			right.setResolution(DEPTH_RESOLUTIONS[self.depthconfig["StereoSensorResolution_calibration"]])
-			right.setBoardSocket(dhai.CameraBoardSocket.RIGHT)
-
-
+		right.setBoardSocket(dhai.CameraBoardSocket.RIGHT)
 		# Create a node that will produce the depth map (using disparity output as it's easier to visualize depth this way)
 		depth.setDefaultProfilePreset(dhai.node.StereoDepth.PresetMode.HIGH_DENSITY)
 		if self.calibration:
@@ -459,7 +453,7 @@ class DeviceManager():
 						cv2.rectangle(image_to_write,(xmin,ymin),(xmax,ymax),(0,0,255),2)
 				except Exception as e:
 					print(f"[CALCULATE OBJECT LOCATION]: {e}")
-			
+
 		return cordinates
 #endregion 
 

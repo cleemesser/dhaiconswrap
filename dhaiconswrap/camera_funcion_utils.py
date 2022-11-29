@@ -112,7 +112,7 @@ class IntrinsicParameters():
 
 def visualise_Axes(color_image, calibration_info_devices, len_axes = 0.10):
 
-		
+
 	bounding_box_points_devices = create_axis_draw_points(calibration_info_devices, len_axes)
 
 	points = bounding_box_points_devices.astype(int)
@@ -137,10 +137,7 @@ def visualise_Axes(color_image, calibration_info_devices, len_axes = 0.10):
 
 def create_draw_points(bounding_box_world_3d, calibration_info_devices):
 
-# Get the bounding box points in the image coordinates
-	bounding_box_points_color_image = Convert3Dto2DImage(calibration_info_devices,bounding_box_world_3d.T)
-
-	return bounding_box_points_color_image
+	return Convert3Dto2DImage(calibration_info_devices,bounding_box_world_3d.T)
 
 
 def make_axis_points(len_axes):
@@ -175,7 +172,7 @@ def Convert3Dto2DImage(calibration_info,bounding_box_world_3d):
 
 	u = (x_RGB * color_intrinsics.fx + color_intrinsics.cx).astype(int)
 	v = (y_RGB * color_intrinsics.fy + color_intrinsics.cy).astype(int) 
-	
+
 	return np.stack([u,v],0).astype(int).T
 
 
