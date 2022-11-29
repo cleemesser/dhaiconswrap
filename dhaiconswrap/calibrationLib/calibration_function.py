@@ -119,11 +119,11 @@ def domulticalibration(device_managers, chessboard_params, calibration_roi, shif
 
 def check_calibration_exist(idname,path = "./"):
 
-	if not os.path.isfile(get_roi_2D_name(path)):
-		return False
-	if not os.path.isfile(get_calibration_name(path,idname)):
-		return False
-	return True
+	return (
+		bool(os.path.isfile(get_calibration_name(path, idname)))
+		if os.path.isfile(get_roi_2D_name(path))
+		else False
+	)
 
 def load_calibration_json(path = "./",id=None):
 
@@ -143,10 +143,10 @@ def load_calibration_json(path = "./",id=None):
 
 	with open(os.path.join(path,'roi_2D.json'),"r") as json_file:
 		roi_2D = json.load(json_file)
-		
+
 	viewROI = roi_2D
 
-	return transformation_devices, roi_2D, viewROI,zdirection
+	return transformation_devices, viewROI, viewROI, zdirection
 
 def get_calibration_name(path,id=None):
 	if id is None:

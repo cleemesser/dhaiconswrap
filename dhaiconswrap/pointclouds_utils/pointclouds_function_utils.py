@@ -71,7 +71,7 @@ def CalculatePointsCloud(depth_image, color_image, pars,APPLY_ROI,zdirection,
 	# compose the xyz array
 	point_cloud_xyz = np.asanyarray((x,y,z))
 
-	
+
 	#convert point from camera coords to world coords
 	if cam2world_mat is not None:
 		XYZ_world_cloud_valid = cam2world_mat.apply_transformation(point_cloud_xyz)
@@ -129,14 +129,12 @@ def CalculatePointsCloud(depth_image, color_image, pars,APPLY_ROI,zdirection,
 
 	XYZ_map_valid[u,v] = XYZ_world_cloud_valid.T
 
-	pointcloud_results = {}
-
-	pointcloud_results['ViewROI'] = viewROI
-	pointcloud_results['XYZ_world_cloud_valid'] = XYZ_world_cloud_valid
-	pointcloud_results['RGB_cloud_valid'] = RGB_cloud_valid
-	pointcloud_results['XYZ_map_valid'] = XYZ_map_valid
-	pointcloud_results['RGB_map_valid'] = RGB_map_valid
-
-	return pointcloud_results
+	return {
+		'ViewROI': viewROI,
+		'XYZ_world_cloud_valid': XYZ_world_cloud_valid,
+		'RGB_cloud_valid': RGB_cloud_valid,
+		'XYZ_map_valid': XYZ_map_valid,
+		'RGB_map_valid': RGB_map_valid,
+	}
 
 

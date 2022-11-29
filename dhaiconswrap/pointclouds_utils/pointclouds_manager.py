@@ -24,17 +24,17 @@ class PointsCloudManager:
 
 		if self.pars is not None:
 
-			result = CalculatePointsCloud(frames["depth"],
-										  frames["color_image"],
-										  self.pars,
-										  False,
-										  self.zdirection,
-										  self.options,
-										  Kdecimation=1,
-										  ZmmConversion=1,
-										  viewROI=self.viewROI,
-										  )
-			return result
+			return CalculatePointsCloud(
+				frames["depth"],
+				frames["color_image"],
+				self.pars,
+				False,
+				self.zdirection,
+				self.options,
+				Kdecimation=1,
+				ZmmConversion=1,
+				viewROI=self.viewROI,
+			)
 
 	def set_options(self,depth_valid: float,z_threshold:float):
 		"""

@@ -110,11 +110,10 @@ class Transformation:
 			(3, N) transformed matrix
 		"""
 		assert(points.shape[0] == 3)
-		n = points.shape[1] 
+		n = points.shape[1]
 		points_ = np.vstack((points, np.ones((1,n))))
 		points_trans_ = np.matmul(self.pose_mat, points_)
-		points_transformed = np.true_divide(points_trans_[:3,:], points_trans_[[-1], :])
-		return points_transformed
+		return np.true_divide(points_trans_[:3,:], points_trans_[[-1], :])
 	
 	def inverse(self):
 		"""
@@ -127,7 +126,7 @@ class Transformation:
 		"""
 		rotation_matrix = self.pose_mat[:3,:3]
 		translation_vector = self.pose_mat[:3,3]
-		
+
 		rot = np.transpose(rotation_matrix)
 		trans = - np.matmul(np.transpose(rotation_matrix), translation_vector)
 		return Transformation(rot, trans)
@@ -224,7 +223,7 @@ class PoseEstimation:
 			#initial vectors are just for correct dimension
 			valid_object_points = objectpoints[:,validPoints]
 			valid_observed_object_points = points3D[:,validPoints]
-			
+
 			#check for sufficient points
 			if valid_object_points.shape[1] < 5:
 				print("Not enough points have a valid depth for calculating the transformation")
@@ -240,10 +239,9 @@ class PoseEstimation:
 		return retval, corners3D, color_to_send
 
 	def transform_3Dcamera_to_3Ddeepth(self,points):
-	
+
 		found_corners, points2D, points3D, validPoints = points
 		if found_corners:
 			inverse = self.deep_to_rgb_extrinsic.inverse()
 			points3D = inverse.apply_transformation(points3D)
-		new_points = [found_corners,points2D,points3D,validPoints]
-		return (new_points)
+		return [found_corners,points2D,points3D,validPoints]

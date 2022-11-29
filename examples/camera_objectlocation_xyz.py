@@ -29,7 +29,7 @@ def multi_cam_calibration():
                             config_path=os.path.join(os.getcwd(),"examples","settings_files"))
         device.enable_device()
         devices[dev_name] = device
-    
+
     _ = domulticalibration(device_managers=devices,
                             chessboard_params=CHESSBOARD_PARAMETERS,
                             calibration_roi=CALIBRATION_ROI,
@@ -37,7 +37,7 @@ def multi_cam_calibration():
                             zdirection=True,
                             path=CALIBRATION_PATH) 
 
-    for _,device in devices.items():
+    for device in devices.values():
         device.disable_device() 
 
 ## MULTIPLE CAM SETUP AND RUNTIME
